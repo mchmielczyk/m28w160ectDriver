@@ -9,3 +9,6 @@ INCLUDE_DIR = -Icpputest/include -Icpputest/include/CppUTestExt -Itests/mocks -I
 all:
 	$(CXX) $(SOURCES) $(CXXFLAGS) $(INCLUDE_DIR) $(LIB_DIR) $(LIBS) -o $(TARGET)
 	./$(TARGET).exe -v
+
+static:
+	"C:/Program Files/Cppcheck/cppcheck.exe" --addon=misra --enable=all core/src/m28w160ect.c

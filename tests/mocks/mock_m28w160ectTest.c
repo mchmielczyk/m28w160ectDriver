@@ -1,18 +1,21 @@
 #include "mock_m28w160ectTest.h"
-STM28W_Status mock_readfn(uint8_t reg, uint8_t * dest)
+STM28W_Status mock_readfn(uint8_t reg, uint16_t *dest)
 {
-    return (STM28W_Status)mock().returnIntValueOrDefault(STM28W_OK);
+    mock_c()->actualCall("read_FN")->withIntParameters("reg", reg)->withOutputParameter("dest", dest);
+    printf("%d", mock_c()->returnIntValueOrDefault(0));
+    return STM28W_Status(mock_c()->returnIntValueOrDefault(0));
 }
 STM28W_Status mock_rcfiCommand(void)
 {
-    return (STM28W_Status)mock().returnIntValueOrDefault(STM28W_OK);
+    mock_c()->actualCall("rcfiC_FN");
+    return STM28W_OK;
 }
 STM28W_Status mock_readCommand(void)
 {
-    return (STM28W_Status)mock().returnIntValueOrDefault(STM28W_OK);
+    mock_c()->actualCall("readC_FN");
+    return STM28W_OK;
 }
-STM28W_Env MOCK_Env={
-    .read_FN=mock_readfn,
-    .rcfiC_FN=mock_rcfiCommand,
-    .readC_FN=mock_readCommand
-};
+STM28W_Env MOCK_Env = {
+    .read_FN = mock_readfn,
+    .rcfiC_FN = mock_rcfiCommand,
+    .readC_FN = mock_readCommand};
