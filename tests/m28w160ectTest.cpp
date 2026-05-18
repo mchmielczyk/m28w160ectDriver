@@ -92,3 +92,85 @@ TEST(M28W_CFI,STM28_CheckDevice_InvalidDevReturn_ReturnError)
     STM28W_Status result = STM28W_CheckDevice(&MOCK_Env);
     CHECK_EQUAL(STM28W_ERROR,result);
 }
+TEST(M28W_CFI, STM28_EraseSuspend_ValidValuesEraseComplete_ReturnOk)
+{
+      uint8_t validRegion = 0x05;
+      uint16_t validStatusRegister = (1<<7);
+
+      mock().expectOneCall("write_FN")
+            .withIntParameter("reg",validRegion)
+            .withIntParameter("value",0xb0)
+            .andReturnValue(STM28W_OK)
+            .andReturnValue(STM28W_OK);
+
+      mock().expectOneCall("write_FN")
+            .withIntParameter("reg",validRegion)
+            .withIntParameter("value",0x70)
+            .andReturnValue(STM28W_OK);
+
+      mock().expectOneCall("rcfiC_FN");
+
+      mock().expectOneCall("read_FN")
+            .withIntParameter("reg",validRegion)
+            .withOutputParameterReturning("dest",&validStatusRegister,sizeof(uint16_t))
+            .andReturnValue(STM28W_OK);
+
+      mock().expectOneCall("readC_FN");
+
+      mock().expectOneCall("write_FN")
+            .withIntParameter("reg",validRegion)
+            .withIntParameter("value",0xff)
+            .andReturnValue(STM28W_OK);
+
+            
+      STM28W_Status result = STM28W_EraseSuspend(&MOCK_Env, &validRegion);
+      CHECK_EQUAL(STM28W_OK,result);
+}
+TEST(M28W_CFI, STM28_EraseSuspend_ValidValuesEraseNotComplete_ReturnOk)
+{
+      uint8_t validRegion = 0x05;
+      uint16_t validStatusRegister = (1<<7)|(1<<6);
+
+      mock().expectOneCall("write_FN")
+            .withIntParameter("reg",validRegion)
+            .withIntParameter("value",0xb0)
+            .andReturnValue(STM28W_OK)
+            .andReturnValue(STM28W_OK);
+
+      mock().expectOneCall("write_FN")
+            .withIntParameter("reg",validRegion)
+            .withIntParameter("value",0x70)
+            .andReturnValue(STM28W_OK);
+
+      mock().expectOneCall("rcfiC_FN");
+
+      mock().expectOneCall("read_FN")
+            .withIntParameter("reg",validRegion)
+            .withOutputParameterReturning("dest",&validStatusRegister,sizeof(uint16_t))
+            .andReturnValue(STM28W_OK);
+
+      mock().expectOneCall("readC_FN");
+
+      mock().expectOneCall("write_FN")
+            .withIntParameter("reg",validRegion)
+            .withIntParameter("value",0xff)
+            .andReturnValue(STM28W_OK);
+
+      mock().expectOneCall("write_FN")
+            .withIntParameter("reg",validRegion)
+            .withIntParameter("value",0xd0)
+            .andReturnValue(STM28W_OK);
+
+            
+      STM28W_Status result = STM28W_EraseSuspend(&MOCK_Env, &validRegion);
+      CHECK_EQUAL(STM28W_OK,result);
+}
+TEST(M28W_CFI, STM28_EraseSuspend_NotValidRegion_ReturnError)
+{
+      uint8_t * notValidRegion = NULL;
+
+      mock().expectNoCall("write_FN");
+            
+      STM28W_Status result = STM28W_EraseSuspend(&MOCK_Env, notValidRegion);
+      CHECK_EQUAL(STM28W_ERROR,result);
+}

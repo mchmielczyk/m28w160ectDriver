@@ -21,17 +21,20 @@ typedef enum{
     STM28W_TIMEOUT
 }STM28W_Status;
 
-typedef STM28W_Status (*readfn)(uint8_t reg, uint16_t * dest);
+typedef STM28W_Status (*readfn)(uint8_t * reg, uint16_t * dest);
+typedef STM28W_Status (*writeFN)(uint8_t * reg, uint16_t * value);
 typedef STM28W_Status (*rcfiCommand)(void);
 typedef STM28W_Status (*readCommand)(void);
 
 typedef struct{
     readfn read_FN;
+    writeFN write_FN;
     rcfiCommand rcfiC_FN;
     readCommand readC_FN;
 }STM28W_Env;
 
 STM28W_Status STM28W_CheckDevice(STM28W_Env *Device);
+STM28W_Status STM28W_EraseSuspend(STM28W_Env *Device, uint8_t * targetRegion);
 
 #ifdef __cplusplus
 }
