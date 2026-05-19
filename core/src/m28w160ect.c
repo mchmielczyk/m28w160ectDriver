@@ -41,6 +41,10 @@ STM28W_Status STM28W_CheckDevice(STM28W_Env *Device)
         {
             returnValue = STM28W_OK;
         }
+        else
+        {
+            returnValue = STM28W_ERROR;
+        }
     }
     return returnValue;
 }
@@ -70,7 +74,7 @@ STM28W_Status STM28W_EraseSuspend(STM28W_Env *Device, uint8_t *targetRegion)
     if ((returnStatus == STM28W_OK) && (statusRegister & (1U << 7U)))
     {
         uint16_t writeBufferReadyValue = 0xff;
-        if ((statusRegister & (1U << 6)))
+        if ((statusRegister & (1U << 6U))!=0U)
         {
             returnStatus = stm28_w_signle_write(Device, targetRegion, &writeBufferReadyValue);
             if (returnStatus != STM28W_ERROR)
